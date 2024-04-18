@@ -1,182 +1,258 @@
-// import java.io.File;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-// User class to represent a user of the portfolio website
-class User {
-    private String name;
-    private String email;
-    private String phoneNumber;
-    private String address;
-
-    public User(String name, String email, String phoneNumber, String address) {
-        this.name = name;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public String getAddress() {
-        return address;
-    }
+// Observer pattern
+interface HTMLGenerationListener {
+    void onHTMLGenerated(String html);
 }
 
-// Form class to represent the information entered by the user
-class Form {
-    private User user;
-    private List<String> projects;
+class HTMLFileWriter {
+    // Singleton pattern
+    private static HTMLFileWriter instance;
 
-    public Form(User user) {
-        this.user = user;
-        this.projects = new ArrayList<>();
+    private HTMLFileWriter() {
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void addProject(String project) {
-        projects.add(project);
-    }
-
-    public List<String> getProjects() {
-        return projects;
-    }
-}
-
-// HTMLGenerator class to generate HTML content for the portfolio
-class HTMLGenerator {
-    public String generateHTML(User user, List<String> projects, String templateHTML) {
-        StringBuilder html = new StringBuilder();
-        html.append("<html><body><h1>Portfolio</h1>");
-        html.append("<p>Name: ").append(user.getName()).append("</p>");
-        html.append("<p>Email: ").append(user.getEmail()).append("</p>");
-        html.append("<p>Phone Number: ").append(user.getPhoneNumber()).append("</p>");
-        html.append("<p>Address: ").append(user.getAddress()).append("</p>");
-        html.append("<h2>Projects:</h2><ul>");
-        for (String project : projects) {
-            html.append("<li>").append(project).append("</li>");
+    public static HTMLFileWriter getInstance() {
+        if (instance == null) {
+            instance = new HTMLFileWriter();
         }
-        html.append("</ul></body></html>");
-        return html.toString();
-    }
-}
-
-// PortfolioWebsite class to manage the portfolio generation process
-class PortfolioWebsite {
-    private Form form;
-    private HTMLGenerator htmlGenerator;
-
-    public PortfolioWebsite(Form form, HTMLGenerator htmlGenerator) {
-        this.form = form;
-        this.htmlGenerator = htmlGenerator;
+        return instance;
     }
 
-    public String generatePortfolio(String templateHTML) {
-        User user = form.getUser();
-        // Generate portfolio using user data and template HTML
-        return htmlGenerator.generateHTML(user, form.getProjects(), templateHTML);
-    }
-
-    public void savePortfolioAsHTML(String portfolioHTML, String fileName) {
+    public void writeHTML(String html) {
         try {
-            FileWriter writer = new FileWriter(fileName + ".html");
-            writer.write(portfolioHTML);
+            FileWriter writer = new FileWriter("portfolio.html");
+            writer.write(html);
             writer.close();
-            System.out.println("Portfolio saved as " + fileName + ".html");
+            JOptionPane.showMessageDialog(null, "Portfolio HTML file generated successfully!");
         } catch (IOException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error writing HTML file: " + e.getMessage());
         }
     }
 }
 
-public class Main {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+// Factory method pattern
+abstract class HTMLFactory {
+    public abstract String generateHTML(String name, String email, String phone, String projectTitle, String projectDescription, String projectLink);
 
-        // Display options for template selection
-        System.out.println("Choose a portfolio template:");
-        System.out.println("1. Basic Portfolio");
-        System.out.println("2. Detailed Portfolio");
-        System.out.print("Enter your choice (1 or 2): ");
-        int templateChoice = scanner.nextInt();
-
-        // Create a user
-        User user = getUserInput(scanner);
-
-        // Create a form with user information
-        Form form = getFormInput(scanner, user);
-
-        // Create an HTMLGenerator instance
-        HTMLGenerator htmlGenerator = new HTMLGenerator();
-
-        // Create a PortfolioWebsite instance
-        PortfolioWebsite portfolioWebsite = new PortfolioWebsite(form, htmlGenerator);
-
-        // Generate portfolio HTML based on template choice
-        String templateFileName = (templateChoice == 1) ? "basic_portfolio_template.html" : "detailed_portfolio_template.html";
-        String portfolioHTML = portfolioWebsite.generatePortfolio(readTemplate(templateFileName));
-
-        // Save portfolio as HTML file
-        portfolioWebsite.savePortfolioAsHTML(portfolioHTML, "portfolio");
-    }
-
-    private static User getUserInput(Scanner scanner) {
-        // Prompt user for input
-        System.out.println("Enter your name:");
-        String name = scanner.next();
-        System.out.println("Enter your email:");
-        String email = scanner.next();
-        System.out.println("Enter your phone number:");
-        String phoneNumber = scanner.next();
-        System.out.println("Enter your address:");
-        String address = scanner.next();
-        
-        return new User(name, email, phoneNumber, address);
-    }
-
-    private static Form getFormInput(Scanner scanner, User user) {
-        // Create a form with user information
-        Form form = new Form(user);
-
-        // Prompt user to enter projects
-        System.out.println("Enter your projects (one per line, type 'done' to finish):");
-        String project = scanner.next();
-        while (!project.equalsIgnoreCase("done")) {
-            form.addProject(project);
-            project = scanner.next();
+    public static HTMLFactory createFactory(String type) {
+        if (type.equals("basic")) {
+            return new BasicHTMLFactory();
+        } else if (type.equals("fancy")) {
+            return new FancyHTMLFactory();
         }
-
-        return form;
+        return null;
     }
+}
 
-    private static String readTemplate(String fileName) {
-        StringBuilder templateContent = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                templateContent.append(line).append("\n");
+class BasicHTMLFactory extends HTMLFactory {
+    @Override
+    public String generateHTML(String name, String email, String phone, String projectTitle, String projectDescription, String projectLink) {
+        return "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<head>\n" +
+                "<title>Portfolio</title>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<h1>Portfolio</h1>\n" +
+                "<h2>Basic Details</h2>\n" +
+                "<p>Name: " + name + "</p>\n" +
+                "<p>Email: " + email + "</p>\n" +
+                "<p>Phone Number: " + phone + "</p>\n" +
+                "<h2>Project Details</h2>\n" +
+                "<p>Title: " + projectTitle + "</p>\n" +
+                "<p>Description: " + projectDescription + "</p>\n" +
+                "<p>Link: <a href=\"" + projectLink + "\">" + projectLink + "</a></p>\n" +
+                "</body>\n" +
+                "</html>";
+    }
+}
+
+class FancyHTMLFactory extends HTMLFactory {
+    @Override
+    public String generateHTML(String name, String email, String phone, String projectTitle, String projectDescription, String projectLink) {
+        return "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<head>\n" +
+                "<title>Fancy Portfolio</title>\n" +
+                "<style>\n" +
+                "body { font-family: Arial, sans-serif; }\n" +
+                "h1 { color: #007bff; }\n" +
+                "h2 { color: #0069d9; }\n" +
+                "p { margin-bottom: 10px; }\n" +
+                "</style>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<h1>Fancy Portfolio</h1>\n" +
+                "<h2>Basic Details</h2>\n" +
+                "<p><strong>Name:</strong> " + name + "</p>\n" +
+                "<p><strong>Email:</strong> " + email + "</p>\n" +
+                "<p><strong>Phone Number:</strong> " + phone + "</p>\n" +
+                "<h2>Project Details</h2>\n" +
+                "<p><strong>Title:</strong> " + projectTitle + "</p>\n" +
+                "<p><strong>Description:</strong> " + projectDescription + "</p>\n" +
+                "<p><strong>Link:</strong> <a href=\"" + projectLink + "\">" + projectLink + "</a></p>\n" +
+                "</body>\n" +
+                "</html>";
+    }
+}
+
+public class Main extends JFrame {
+
+    private JTextField nameField, emailField, phoneField, projectTitleField, projectDescriptionField, projectLinkField;
+
+    private final List<HTMLGenerationListener> listeners = new ArrayList<>();
+
+    public Main() {
+        super("Portfolio Generator");
+
+        // Create labels and text fields for user input
+        JLabel nameLabel = new JLabel("Name:");
+        nameField = new JTextField(20);
+        JLabel emailLabel = new JLabel("Email:");
+        emailField = new JTextField(20);
+        JLabel phoneLabel = new JLabel("Phone Number:");
+        phoneField = new JTextField(20);
+        JLabel projectTitleLabel = new JLabel("Project Title:");
+        projectTitleField = new JTextField(20);
+        JLabel projectDescriptionLabel = new JLabel("Project Description:");
+        projectDescriptionField = new JTextField(20);
+        JLabel projectLinkLabel = new JLabel("Project Link:");
+        projectLinkField = new JTextField(20);
+
+        // Create radio buttons for HTML type selection
+        JRadioButton basicRadio = new JRadioButton("Basic HTML");
+        JRadioButton fancyRadio = new JRadioButton("Fancy HTML");
+        ButtonGroup group = new ButtonGroup();
+        group.add(basicRadio);
+        group.add(fancyRadio);
+
+        // Create button to generate portfolio HTML
+        JButton generateButton = new JButton("Generate Portfolio");
+        generateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String name = nameField.getText();
+                String email = emailField.getText();
+                String phone = phoneField.getText();
+                String projectTitle = projectTitleField.getText();
+                String projectDescription = projectDescriptionField.getText();
+                String projectLink = projectLinkField.getText();
+
+                // Factory method pattern
+                HTMLFactory factory = HTMLFactory.createFactory(basicRadio.isSelected() ? "basic" : "fancy");
+                String htmlContent = factory.generateHTML(name, email, phone, projectTitle, projectDescription, projectLink);
+
+                // Write HTML content to a file
+                HTMLFileWriter.getInstance().writeHTML(htmlContent);
+
+                // Observer pattern
+                notifyListeners(htmlContent);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        });
+
+        // Layout components using GridBagLayout
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.insets = new Insets(10, 10, 10, 10);
+
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        panel.add(nameLabel, constraints);
+
+        constraints.gridx = 1;
+        panel.add(nameField, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        panel.add(emailLabel, constraints);
+
+        constraints.gridx = 1;
+        panel.add(emailField, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        panel.add(phoneLabel, constraints);
+
+        constraints.gridx = 1;
+        panel.add(phoneField, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+        panel.add(projectTitleLabel, constraints);
+
+        constraints.gridx = 1;
+        panel.add(projectTitleField, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 4;
+        panel.add(projectDescriptionLabel, constraints);
+
+        constraints.gridx = 1;
+        panel.add(projectDescriptionField, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 5;
+        panel.add(projectLinkLabel, constraints);
+
+        constraints.gridx = 1;
+        panel.add(projectLinkField, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 6;
+        constraints.gridwidth = 2;
+        constraints.anchor = GridBagConstraints.CENTER;
+        panel.add(basicRadio, constraints);
+
+        constraints.gridy = 7;
+        panel.add(fancyRadio, constraints);
+
+        constraints.gridy = 8;
+        panel.add(generateButton, constraints);
+
+        add(panel);
+        pack();
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+
+    // Observer pattern
+    public void addHTMLGenerationListener(HTMLGenerationListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeHTMLGenerationListener(HTMLGenerationListener listener) {
+        listeners.remove(listener);
+    }
+
+    private void notifyListeners(String html) {
+        for (HTMLGenerationListener listener : listeners) {
+            listener.onHTMLGenerated(html);
         }
-        return templateContent.toString();
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Main main = new Main();
+                // Observer pattern
+                main.addHTMLGenerationListener(new HTMLGenerationListener() {
+                    @Override
+                    public void onHTMLGenerated(String html) {
+                        // Do something when HTML is generated
+                    }
+                });
+                main.setVisible(true);
+            }
+        });
     }
 }
