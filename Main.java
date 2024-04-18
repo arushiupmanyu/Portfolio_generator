@@ -56,53 +56,135 @@ class BasicHTMLFactory extends HTMLFactory {
     @Override
     public String generateHTML(String name, String email, String phone, String projectTitle, String projectDescription, String projectLink) {
         return "<!DOCTYPE html>\n" +
-                "<html>\n" +
-                "<head>\n" +
-                "<title>Portfolio</title>\n" +
-                "</head>\n" +
-                "<body>\n" +
-                "<h1>Portfolio</h1>\n" +
-                "<h2>Basic Details</h2>\n" +
-                "<p>Name: " + name + "</p>\n" +
-                "<p>Email: " + email + "</p>\n" +
-                "<p>Phone Number: " + phone + "</p>\n" +
-                "<h2>Project Details</h2>\n" +
-                "<p>Title: " + projectTitle + "</p>\n" +
-                "<p>Description: " + projectDescription + "</p>\n" +
-                "<p>Link: <a href=\"" + projectLink + "\">" + projectLink + "</a></p>\n" +
-                "</body>\n" +
-                "</html>";
-    }
+        "<html lang=\"en\">\n" +
+        "<head>\n" +
+        "    <meta charset=\"UTF-8\">\n" +
+        "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+        "    <title>Portfolio</title>\n" +
+        "    <style>\n" +
+        "        body {\n" +
+        "            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n" +
+        "            background-color: #f0f0f0;\n" +
+        "            margin: 0;\n" +
+        "            padding: 0;\n" +
+        "            display: flex;\n" +
+        "            justify-content: center;\n" +
+        "            align-items: center;\n" +
+        "            min-height: 100vh;\n" +
+        "        }\n" +
+        "        .container {\n" +
+        "            max-width: 800px;\n" +
+        "            padding: 40px;\n" +
+        "            background-color: #fff;\n" +
+        "            border-radius: 10px;\n" +
+        "            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);\n" +
+        "        }\n" +
+        "        h1, h2, h3 {\n" +
+        "            color: #333;\n" +
+        "        }\n" +
+        "        p {\n" +
+        "            color: #666;\n" +
+        "        }\n" +
+        "        strong {\n" +
+        "            font-weight: bold;\n" +
+        "        }\n" +
+        "        a {\n" +
+        "            color: #007bff;\n" +
+        "            text-decoration: none;\n" +
+        "        }\n" +
+        "        a:hover {\n" +
+        "            text-decoration: underline;\n" +
+        "        }\n" +
+        "    </style>\n" +
+        "</head>\n" +
+        "<body>\n" +
+        "    <div class=\"container\">\n" +
+        "        <h1>Portfolio</h1>\n" +
+        "        <div class=\"basic-details\">\n" +
+        "            <h2>Basic Details</h2>\n" +
+        "            <p><strong>Name:</strong> " + name + "</p>\n" +
+        "            <p><strong>Email:</strong> " + email + "</p>\n" +
+        "            <p><strong>Phone Number:</strong> " + phone + "</p>\n" +
+        "        </div>\n" +
+        "        <div class=\"project-details\">\n" +
+        "            <h2>Project Details</h2>\n" +
+        "            <p><strong>Title:</strong> " + projectTitle + "</p>\n" +
+        "            <p><strong>Description:</strong> " + projectDescription + "</p>\n" +
+        "            <p><strong>Link:</strong> <a href=\"" + projectLink + "\">" + projectLink + "</a></p>\n" +
+        "        </div>\n" +
+        "    </div>\n" +
+        "</body>\n" +
+        "</html>";
+}
 }
 
 class FancyHTMLFactory extends HTMLFactory {
     @Override
     public String generateHTML(String name, String email, String phone, String projectTitle, String projectDescription, String projectLink) {
         return "<!DOCTYPE html>\n" +
-                "<html>\n" +
-                "<head>\n" +
-                "<title>Fancy Portfolio</title>\n" +
-                "<style>\n" +
-                "body { font-family: Arial, sans-serif; }\n" +
-                "h1 { color: #007bff; }\n" +
-                "h2 { color: #0069d9; }\n" +
-                "p { margin-bottom: 10px; }\n" +
-                "</style>\n" +
-                "</head>\n" +
-                "<body>\n" +
-                "<h1>Fancy Portfolio</h1>\n" +
-                "<h2>Basic Details</h2>\n" +
-                "<p><strong>Name:</strong> " + name + "</p>\n" +
-                "<p><strong>Email:</strong> " + email + "</p>\n" +
-                "<p><strong>Phone Number:</strong> " + phone + "</p>\n" +
-                "<h2>Project Details</h2>\n" +
-                "<p><strong>Title:</strong> " + projectTitle + "</p>\n" +
-                "<p><strong>Description:</strong> " + projectDescription + "</p>\n" +
-                "<p><strong>Link:</strong> <a href=\"" + projectLink + "\">" + projectLink + "</a></p>\n" +
-                "</body>\n" +
-                "</html>";
-    }
+        "<html lang=\"en\">\n" +
+        "<head>\n" +
+        "    <meta charset=\"UTF-8\">\n" +
+        "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+        "    <title>Portfolio</title>\n" +
+        "    <style>\n" +
+        "        body {\n" +
+        "            font-family: 'Poppins', sans-serif;\n" +
+        "            background-color: #f9f9f9;\n" +
+        "            margin: 0;\n" +
+        "            padding: 0;\n" +
+        "            display: flex;\n" +
+        "            justify-content: center;\n" +
+        "            align-items: center;\n" +
+        "            min-height: 100vh;\n" +
+        "            color: #333;\n" +
+        "        }\n" +
+        "        .container {\n" +
+        "            max-width: 800px;\n" +
+        "            padding: 40px;\n" +
+        "            background-color: #fff;\n" +
+        "            border-radius: 20px;\n" +
+        "            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);\n" +
+        "        }\n" +
+        "        h1, h2, h3 {\n" +
+        "            color: #ff6b6b;\n" +
+        "        }\n" +
+        "        p {\n" +
+        "            color: #555;\n" +
+        "        }\n" +
+        "        strong {\n" +
+        "            color: #333;\n" +
+        "        }\n" +
+        "        a {\n" +
+        "            color: #ff6b6b;\n" +
+        "            text-decoration: none;\n" +
+        "        }\n" +
+        "        a:hover {\n" +
+        "            text-decoration: underline;\n" +
+        "        }\n" +
+        "    </style>\n" +
+        "</head>\n" +
+        "<body>\n" +
+        "    <div class=\"container\">\n" +
+        "        <h1>Portfolio</h1>\n" +
+        "        <div class=\"basic-details\">\n" +
+        "            <h2>Basic Details</h2>\n" +
+        "            <p><strong>Name:</strong> " + name + "</p>\n" +
+        "            <p><strong>Email:</strong> " + email + "</p>\n" +
+        "            <p><strong>Phone Number:</strong> " + phone + "</p>\n" +
+        "        </div>\n" +
+        "        <div class=\"project-details\">\n" +
+        "            <h2>Project Details</h2>\n" +
+        "            <p><strong>Title:</strong> " + projectTitle + "</p>\n" +
+        "            <p><strong>Description:</strong> " + projectDescription + "</p>\n" +
+        "            <p><strong>Link:</strong> <a href=\"" + projectLink + "\">" + projectLink + "</a></p>\n" +
+        "        </div>\n" +
+        "    </div>\n" +
+        "</body>\n" +
+        "</html>";
 }
+}
+
 
 public class Main extends JFrame {
 
