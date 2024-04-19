@@ -14,6 +14,11 @@ interface HTMLGenerationListener {
     void onHTMLGenerated(String html);
 }
 
+// Strategy pattern
+interface ColorStrategy {
+    String applyColor(String html);
+}
+
 class HTMLFileWriter {
     // Singleton pattern
     private static HTMLFileWriter instance;
@@ -90,9 +95,25 @@ class FancyHTMLFactory extends HTMLFactory {
     }
 }
 
+// Concrete color strategy for different color options
+class RedColorStrategy implements ColorStrategy {
+    @Override
+    public String applyColor(String html) {
+        return html.replace("#ff6b6b", "#ff4d4d"); // Change color to red
+    }
+}
+
+class BlueColorStrategy implements ColorStrategy {
+    @Override
+    public String applyColor(String html) {
+        return html.replace("#ff6b6b", "#4d4dff"); // Change color to blue
+    }
+}
+
 public class Main extends JFrame {
 
     private JTextField nameField, emailField, phoneField, projectTitleField, projectDescriptionField, projectLinkField;
+    private JComboBox<String> colorComboBox; // Dropdown menu for selecting color options
 
     private final List<HTMLGenerationListener> listeners = new ArrayList<>();
 
@@ -120,6 +141,9 @@ public class Main extends JFrame {
         group.add(basicRadio);
         group.add(fancyRadio);
 
+        // Create dropdown menu for selecting color options
+        colorComboBox = new JComboBox<>(new String[]{"Default", "Red", "Blue"});
+
         // Create button to generate portfolio HTML
         JButton generateButton = new JButton("Generate Portfolio");
         generateButton.addActionListener(new ActionListener() {
@@ -135,6 +159,17 @@ public class Main extends JFrame {
                 // Factory method pattern
                 HTMLFactory factory = HTMLFactory.createFactory(basicRadio.isSelected() ? "basic" : "fancy");
                 String htmlContent = factory.generateHTML(name, email, phone, projectTitle, projectDescription, projectLink);
+
+                // Apply color strategy based on selected option
+                switch (colorComboBox.getSelectedIndex()) {
+                    case 1:
+                        htmlContent = new RedColorStrategy().applyColor(htmlContent);
+                        break;
+                    case 2:
+                        htmlContent = new BlueColorStrategy().applyColor(htmlContent);
+                        break;
+                    // For "Default" option, no color change needed
+                }
 
                 // Write HTML content to a file
                 HTMLFileWriter.getInstance().writeHTML(htmlContent);
@@ -202,6 +237,14 @@ public class Main extends JFrame {
         panel.add(fancyRadio, constraints);
 
         constraints.gridy = 8;
+        panel.add(new JLabel("Select Color:"), constraints); // Label for color dropdown
+        constraints.gridx = 1;
+        panel.add(colorComboBox, constraints); // Dropdown for selecting color
+
+        constraints.gridx = 0;
+        constraints.gridy = 9;
+        constraints.gridwidth = 2;
+        constraints.anchor = GridBagConstraints.CENTER;
         panel.add(generateButton, constraints);
 
         add(panel);
